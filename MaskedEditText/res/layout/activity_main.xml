@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/com.example.maskededit"
+    android:id="@+id/linear"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.maskededit.MaskedEditText
+        android:id="@+id/maskEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text=""
+        custom:mask="(9)99-9A?*"
+        custom:placeholder="_" >
+
+        <requestFocus />
+    </com.example.maskededit.MaskedEditText>
+    
+    <TextView 
+       	android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button 
+       	android:id="@+id/button1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show text without mask" />
+    
+     <Button 
+       	android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show text with mask" />
+    
+</LinearLayout>
