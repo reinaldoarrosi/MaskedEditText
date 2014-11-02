@@ -2,11 +2,7 @@ package com.example.maskededit;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.text.Editable;
-import android.text.Selection;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextWatcher;
+import android.text.*;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
@@ -100,7 +96,10 @@ public class MaskedEditText extends EditText {
 	}
 
 	private void formatMask(Editable value) {
-		int i = 0;
+		InputFilter[] inputFilters = value.getFilters();
+        value.setFilters(new InputFilter[0]);
+
+        int i = 0;
 		int j = 0;
 		int maskLength = 0;
 		boolean treatNextCharAsLiteral = false;
@@ -144,6 +143,8 @@ public class MaskedEditText extends EditText {
 
 		Selection.setSelection(value, value.getSpanStart(selection), value.getSpanEnd(selection));
 		value.removeSpan(selection);
+
+        value.setFilters(inputFilters);
 	}
 
 	private void stripMaskChars(Editable value) {
