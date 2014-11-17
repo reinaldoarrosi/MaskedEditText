@@ -33,7 +33,7 @@ public class MaskedEditText extends EditText {
 	}
 
 	public MaskedEditText(Context context, AttributeSet attr, String mask) {
-		this(context, attr, "", ' ');
+		this(context, attr, mask, ' ');
 	}
 
 	public MaskedEditText(Context context, AttributeSet attr, String mask, char placeholder) {
@@ -45,8 +45,7 @@ public class MaskedEditText extends EditText {
 		for (int i = 0; i < N; ++i)
 		{
 		    int at = a.getIndex(i);
-		    switch (at)
-		    {
+		    switch (at) {
 		        case R.styleable.MaskedEditText_mask:
 		            mask = (mask.length() > 0 ? mask : a.getString(at));
 		            break;
@@ -62,23 +61,32 @@ public class MaskedEditText extends EditText {
 		this.placeholder = String.valueOf(placeholder);
 		addTextChangedListener(new MaskTextWatcher());
 
-		if (mask.length() > 0)
-			setText(getText()); // sets the text to create the mask
+		if (!hasHint() && mask.length() > 0) {
+            		setText(getText()); // sets the text to create the mask
+        	}
 	}
-	
+
+	private boolean hasHint() {
+		return getHint() != null;
+	}
+
+    	@SuppressWarnings("unused")
 	public String getMask() {
 		return mask;
 	}
 
+    	@SuppressWarnings("unused")
 	public void setMask(String mask) {
 		this.mask = mask;
 		setText(getText());
 	}
-	
+
+    	@SuppressWarnings("unused")
 	public char getPlaceholder() {
 		return placeholder.charAt(0);
 	}
 
+    	@SuppressWarnings("unused")
 	public void setPlaceholder(char placeholder) {
 		this.placeholder = String.valueOf(placeholder);
 		setText(getText());
@@ -97,67 +105,67 @@ public class MaskedEditText extends EditText {
 
 	private void formatMask(Editable value) {
 		InputFilter[] inputFilters = value.getFilters();
-        value.setFilters(new InputFilter[0]);
-
-        int i = 0;
-		int j = 0;
-		int maskLength = 0;
-		boolean treatNextCharAsLiteral = false;
-
-		Object selection = new Object();
-		value.setSpan(selection, Selection.getSelectionStart(value), Selection.getSelectionEnd(value), Spanned.SPAN_MARK_MARK);
-
-		while (i < mask.length()) {
-			if (!treatNextCharAsLiteral && isMaskChar(mask.charAt(i))) {
-				if (j >= value.length()) {
-					value.insert(j, placeholder);
-					value.setSpan(new PlaceholderSpan(), j, j + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-					j++;
-				} else if (!matchMask(mask.charAt(i), value.charAt(j))) {
-					value.delete(j, j + 1);
-					i--;
-					maskLength--;
+	        value.setFilters(new InputFilter[0]);
+	
+	        int i = 0;
+			int j = 0;
+			int maskLength = 0;
+			boolean treatNextCharAsLiteral = false;
+	
+			Object selection = new Object();
+			value.setSpan(selection, Selection.getSelectionStart(value), Selection.getSelectionEnd(value), Spanned.SPAN_MARK_MARK);
+	
+			while (i < mask.length()) {
+				if (!treatNextCharAsLiteral && isMaskChar(mask.charAt(i))) {
+					if (j >= value.length()) {
+						value.insert(j, placeholder);
+						value.setSpan(new PlaceholderSpan(), j, j + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+						j++;
+					} else if (!matchMask(mask.charAt(i), value.charAt(j))) {
+						value.delete(j, j + 1);
+						i--;
+						maskLength--;
+					} else {
+						j++;
+					}
+	
+					maskLength++;
+				} else if (!treatNextCharAsLiteral && mask.charAt(i) == ESCAPE_CHAR) {
+					treatNextCharAsLiteral = true;
 				} else {
+					value.insert(j, String.valueOf(mask.charAt(i)));
+					value.setSpan(new LiteralSpan(), j, j + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+					treatNextCharAsLiteral = false;
+	
 					j++;
+					maskLength++;
 				}
-
-				maskLength++;
-			} else if (!treatNextCharAsLiteral && mask.charAt(i) == ESCAPE_CHAR) {
-				treatNextCharAsLiteral = true;
-			} else {
-				value.insert(j, String.valueOf(mask.charAt(i)));
-				value.setSpan(new LiteralSpan(), j, j + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				treatNextCharAsLiteral = false;
-
-				j++;
-				maskLength++;
+	
+				i++;
 			}
-
-			i++;
-		}
-
-		while (value.length() > maskLength) {
-			int pos = value.length() - 1;
-			value.delete(pos, pos + 1);
-		}
-
-		Selection.setSelection(value, value.getSpanStart(selection), value.getSpanEnd(selection));
-		value.removeSpan(selection);
-
-        value.setFilters(inputFilters);
+	
+			while (value.length() > maskLength) {
+				int pos = value.length() - 1;
+				value.delete(pos, pos + 1);
+			}
+	
+			Selection.setSelection(value, value.getSpanStart(selection), value.getSpanEnd(selection));
+			value.removeSpan(selection);
+	
+	        value.setFilters(inputFilters);
 	}
 
 	private void stripMaskChars(Editable value) {
-		PlaceholderSpan[] pspans = value.getSpans(0, value.length(), PlaceholderSpan.class);
-		LiteralSpan[] lspans = value.getSpans(0, value.length(), LiteralSpan.class);
+		PlaceholderSpan[] pSpans = value.getSpans(0, value.length(), PlaceholderSpan.class);
+		LiteralSpan[] lSpans = value.getSpans(0, value.length(), LiteralSpan.class);
 
-		for (int k = 0; k < pspans.length; k++) {
-			value.delete(value.getSpanStart(pspans[k]), value.getSpanEnd(pspans[k]));
+		for (PlaceholderSpan pSpan : pSpans) {
+			value.delete(value.getSpanStart(pSpan), value.getSpanEnd(pSpan));
 		}
 
-		for (int k = 0; k < lspans.length; k++) {
-			value.delete(value.getSpanStart(lspans[k]), value.getSpanEnd(lspans[k]));
-		}
+	        for (LiteralSpan lSpan : lSpans) {
+	            value.delete(value.getSpanStart(lSpan), value.getSpanEnd(lSpan));
+	        }
 	}
 
 	private boolean matchMask(char mask, char value) {
@@ -171,11 +179,11 @@ public class MaskedEditText extends EditText {
 
 	private boolean isMaskChar(char mask) {
 		switch (mask) {
-		case NUMBER_MASK:
-		case ALPHA_MASK:
-		case ALPHANUMERIC_MASK:
-		case CHARACTER_MASK:
-			return true;
+	            case NUMBER_MASK:
+	            case ALPHA_MASK:
+	            case ALPHANUMERIC_MASK:
+	            case CHARACTER_MASK:
+		    	return true;
 		}
 
 		return false;
@@ -186,14 +194,19 @@ public class MaskedEditText extends EditText {
 
 		@Override
 		public void afterTextChanged(Editable s) {
-			if (updating || mask.length() == 0)
-				return;
+			if (updating || mask.length() == 0) {
+                		return;
+            		}
 
 			if (!updating) {
 				updating = true;
 
 				stripMaskChars(s);
-				formatMask(s);
+		                if (s.length() != 0) {
+		                    formatMask(s);
+		                } else if (hasHint()) {
+		                    setText("");
+		                }
 
 				updating = false;
 			}
