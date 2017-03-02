@@ -3,12 +3,23 @@
 This is a masked edit text widget for Android. It handles copy and paste, cursor positioning without being super slow or doing complicated things.
 
 ##Installation
-There is no .JAR or Android Library Project. The whole process to use MaskedEditText is composed of 3 steps:
-1. Copy MaskedEditText.java to your own project
-2. Create a attrs.xml in res/values (you can skip this step if you already have an attrs.xml file)
-3. Copy the contents of attrs.xml from the MaskedEditText repository to your own attrs.xml
 
-The most basic attrs.xml should look exactly like the one in this repository.
+###Gradle
+
+```groovy
+compile 'com.github.reinaldoarrosi:maskededittext:1.0.0'
+```
+
+###Maven
+
+```xml
+<dependency>
+  <groupId>com.github.reinaldoarrosi</groupId>
+  <artifactId>maskededittext</artifactId>
+  <version>1.0.0</version>
+  <type>pom</type>
+</dependency>
+```
 
 ##Usage
 MaskedEditText is, as you might have imagined, a class that inherits from EditText. This means that every thing you can do with a EditText you can with a MaskedEditText. Besides that, there are only 5 extra methods:
