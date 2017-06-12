@@ -4,7 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.*;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.EditText;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class MaskedEditText extends EditText {
     private static final char NUMBER_MASK = '9';
@@ -15,6 +20,7 @@ public class MaskedEditText extends EditText {
 
     private String mask;
     private String placeholder;
+    private List<TextWatcher> textWatchers = new ArrayList<TextWatcher>();
 
     public MaskedEditText(Context context) {
         this(context, "");
@@ -59,7 +65,7 @@ public class MaskedEditText extends EditText {
 
         this.mask = mask;
         this.placeholder = String.valueOf(placeholder);
-        addTextChangedListener(new MaskTextWatcher());
+        super.addTextChangedListener(new MaskTextWatcher());
 
         if (mask.length() > 0)
             setText(getText()); // sets the text to create the mask
@@ -92,6 +98,16 @@ public class MaskedEditText extends EditText {
 
             return value;
         }
+    }
+
+    @Override
+    public void addTextChangedListener(TextWatcher watcher) {
+        this.textWatchers.add(watcher);
+    }
+
+    @Override
+    public void removeTextChangedListener(TextWatcher watcher) {
+        this.textWatchers.remove(watcher);
     }
 
     private void formatMask(Editable value) {
@@ -185,8 +201,27 @@ public class MaskedEditText extends EditText {
         return hint != null && hint.length() > 0;
     }
 
+    private void invokeBeforeTextChanged(CharSequence s, int start, int count, int after) {
+        for (TextWatcher t : this.textWatchers) {
+            t.beforeTextChanged(s, start, count, after);
+        }
+    }
+
+    private void invokeOnTextChanged(CharSequence s, int start, int before, int count) {
+        for (TextWatcher t : this.textWatchers) {
+            t.onTextChanged(s, start, before, count);
+        }
+    }
+
+    private void invokeAfterTextChanged(Editable s) {
+        for (TextWatcher t : this.textWatchers) {
+            t.afterTextChanged(s);
+        }
+    }
+
     private class MaskTextWatcher implements TextWatcher {
         private boolean updating = false;
+        private String originalValue;
 
         @Override
         public void afterTextChanged(Editable s) {
@@ -205,15 +240,25 @@ public class MaskedEditText extends EditText {
                 }
 
                 updating = false;
+
+                if(!originalValue.equals(getText(true).toString())) {
+                    invokeAfterTextChanged(s);
+                }
             }
         }
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            if(updating) return;
+
+            originalValue = getText(true).toString();
+            invokeBeforeTextChanged(s, start, count, after);
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if(updating) return;
+            invokeOnTextChanged(s, start, before, count);
         }
     }
 

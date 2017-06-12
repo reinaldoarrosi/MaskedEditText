@@ -21,6 +21,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Hint text"
-        maskededittext:mask="(A)?99A-9++??" />
+        maskededittext:mask="(A)?99A-9++??"
+        android:id="@+id/txtMaskedEditText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lblTextWatcherCount" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtEditText"
+        android:maxLength="5"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lblTextWatcherCount2" />
 
 </LinearLayout>
