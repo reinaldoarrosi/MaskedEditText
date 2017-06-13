@@ -7,7 +7,7 @@ This is a masked edit text widget for Android. It handles copy and paste, cursor
 ### Gradle
 
 ```groovy
-compile 'com.github.reinaldoarrosi:maskededittext:1.0.0'
+compile 'com.github.reinaldoarrosi:maskededittext:1.1.0'
 ```
 
 ### Maven
@@ -16,7 +16,7 @@ compile 'com.github.reinaldoarrosi:maskededittext:1.0.0'
 <dependency>
   <groupId>com.github.reinaldoarrosi</groupId>
   <artifactId>maskededittext</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <type>pom</type>
 </dependency>
 ```
