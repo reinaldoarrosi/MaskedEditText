@@ -61,7 +61,10 @@ public class MaskedEditText extends EditText {
         a.recycle();
 
         // disable text suggestions since they can influence in the mask
-        setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+        setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD | getInputType());
+
+
 
         this.mask = mask;
         this.placeholder = String.valueOf(placeholder);
