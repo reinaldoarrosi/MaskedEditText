@@ -103,6 +103,13 @@ public class MaskedEditText extends EditText {
         }
     }
 
+    public Editable getTextWithoutPlaceholders() {
+        SpannableStringBuilder value = new SpannableStringBuilder(getText());
+        stripPlaceholders(value);
+
+        return value;
+    }
+
     @Override
     public void addTextChangedListener(TextWatcher watcher) {
         this.textWatchers.add(watcher);
@@ -175,6 +182,14 @@ public class MaskedEditText extends EditText {
 
         for (LiteralSpan lSpan : lSpans) {
             value.delete(value.getSpanStart(lSpan), value.getSpanEnd(lSpan));
+        }
+    }
+
+    private void stripPlaceholders(Editable value) {
+        PlaceholderSpan[] pSpans = value.getSpans(0, value.length(), PlaceholderSpan.class);
+
+        for (PlaceholderSpan pSpan : pSpans) {
+            value.delete(value.getSpanStart(pSpan), value.getSpanEnd(pSpan));
         }
     }
 
