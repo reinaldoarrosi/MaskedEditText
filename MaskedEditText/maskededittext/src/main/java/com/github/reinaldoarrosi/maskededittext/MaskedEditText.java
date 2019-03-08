@@ -119,13 +119,23 @@ public class MaskedEditText extends EditText {
         this.textWatchers.remove(watcher);
     }
 
-    private void formatMask(Editable value) {
+    private void formatMask(Editable value, String formattedOriginal) {
         InputFilter[] inputFilters = value.getFilters();
         value.setFilters(new InputFilter[0]);
         StringBuffer stack = new StringBuffer(value.toString());
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
+        if(formattedOriginal.length() >= value.length()) {
+            value.setFilters(inputFilters);
+            setSelection(value.length());
+            return;
+        }
+
         for (char maskChar: mask.toCharArray()) {
+            if(stack.length() == 0 && !isMaskChar(maskChar)) {
+                builder.append(String.valueOf(maskChar), new LiteralSpan(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                continue;
+            }
             if(stack.length() == 0) {
                 break;
             }
@@ -227,6 +237,7 @@ public class MaskedEditText extends EditText {
     private class MaskTextWatcher implements TextWatcher {
         private boolean updating = false;
         private String originalValue;
+        private String formattedOriginal;
 
         @Override
         public void afterTextChanged(Editable s) {
@@ -241,7 +252,7 @@ public class MaskedEditText extends EditText {
                 if (s.length() <= 0 && hasHint()) {
                     setText("");
                 } else {
-                    formatMask(s);
+                    formatMask(s, formattedOriginal);
                 }
 
                 updating = false;
@@ -256,6 +267,7 @@ public class MaskedEditText extends EditText {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             if(updating) return;
 
+            formattedOriginal = getText().toString();
             originalValue = getText(true).toString();
             invokeBeforeTextChanged(s, start, count, after);
         }
