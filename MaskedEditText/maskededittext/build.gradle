@@ -34,7 +34,7 @@ ext {
     siteUrl = 'https://github.com/reinaldoarrosi/MaskedEditText'
     gitUrl = 'https://github.com/reinaldoarrosi/MaskedEditText.git'
 
-    libraryVersion = '1.4.0'
+    libraryVersion = '1.4.1'
 
     developerId = 'rarrosi'
     developerName = 'Reinaldo Arrosi'

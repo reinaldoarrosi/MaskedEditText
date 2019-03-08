@@ -238,7 +238,7 @@ public class MaskedEditText extends EditText {
         }
     }
 
-    private void resetSelection() {
+    public void resetSelection() {
         if(selectionSpan != null) {
             SpannableStringBuilder value = new SpannableStringBuilder(getText());
             Selection.setSelection(value, value.getSpanStart(selectionSpan), value.getSpanEnd(selectionSpan));
