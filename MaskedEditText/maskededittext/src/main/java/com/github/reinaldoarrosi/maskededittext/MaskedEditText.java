@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.*;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class MaskedEditText extends EditText {
     private static final char NUMBER_MASK = '9';
@@ -124,52 +122,33 @@ public class MaskedEditText extends EditText {
     private void formatMask(Editable value) {
         InputFilter[] inputFilters = value.getFilters();
         value.setFilters(new InputFilter[0]);
+        StringBuffer stack = new StringBuffer(value.toString());
+        SpannableStringBuilder builder = new SpannableStringBuilder();
 
-        int i = 0;
-        int j = 0;
-        int maskLength = 0;
-        boolean treatNextCharAsLiteral = false;
-
-        SelectionSpan selection = new SelectionSpan();
-        value.setSpan(selection, Selection.getSelectionStart(value), Selection.getSelectionEnd(value), Spanned.SPAN_MARK_MARK);
-
-        while (i < mask.length()) {
-            if (!treatNextCharAsLiteral && isMaskChar(mask.charAt(i))) {
-                if (j >= value.length()) {
-                    value.insert(j, placeholder);
-                    value.setSpan(new PlaceholderSpan(), j, j + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    j++;
-                } else if (!matchMask(mask.charAt(i), value.charAt(j))) {
-                    value.delete(j, j + 1);
-                    i--;
-                    maskLength--;
-                } else {
-                    j++;
+        for (char maskChar: mask.toCharArray()) {
+            if(stack.length() == 0) {
+                break;
+            }
+            if(!isMaskChar(maskChar)) {
+                builder.append(String.valueOf(maskChar), new LiteralSpan(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                continue;
+            }
+            if(isMaskChar(maskChar)) {
+                char valueChar = stack.charAt(0);
+                stack.deleteCharAt(0);
+                while(!matchMask(maskChar, valueChar) && stack.length() > 0) {
+                    valueChar = stack.charAt(0);
+                    stack.deleteCharAt(0);
                 }
 
-                maskLength++;
-            } else if (!treatNextCharAsLiteral && mask.charAt(i) == ESCAPE_CHAR) {
-                treatNextCharAsLiteral = true;
-            } else {
-                value.insert(j, String.valueOf(mask.charAt(i)));
-                value.setSpan(new LiteralSpan(), j, j + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                treatNextCharAsLiteral = false;
-
-                j++;
-                maskLength++;
+                if(matchMask(maskChar, valueChar)) {
+                    builder.append(valueChar);
+                }
             }
-
-            i++;
         }
 
-        while (value.length() > maskLength) {
-            int pos = value.length() - 1;
-            value.delete(pos, pos + 1);
-        }
-
-        Selection.setSelection(value, value.getSpanStart(selection), value.getSpanEnd(selection));
-        selectionSpan = selection;
-
+        value.replace(0, value.length(), builder.toString());
+        setSelection(builder.length());
         value.setFilters(inputFilters);
     }
 

@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                txtMaskedEditText.setMask("9999 9999 9999 9999");
                 textWatcherCount++;
                 lblTextWatcherCount.setText(String.valueOf(textWatcherCount));
             }

@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Hint text"
-        maskededittext:mask="(A)?99A-9++??"
+        maskededittext:mask="9999 9999 9999 9999"
         android:id="@+id/txtMaskedEditText" />
 
     <TextView

@@ -1,4 +1,7 @@
 # MaskedEditText for Android
+## ***WARNING***
+This fork was retooled for an internal project and has not
+been tested at all for anything but the use cases I needed it for
 
 This is a masked edit text widget for Android. It handles copy and paste, cursor positioning without being super slow or doing complicated things.
 
