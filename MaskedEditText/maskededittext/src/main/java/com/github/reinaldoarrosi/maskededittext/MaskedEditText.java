@@ -21,6 +21,7 @@ public class MaskedEditText extends EditText {
     private String mask;
     private String placeholder;
     private List<TextWatcher> textWatchers = new ArrayList<TextWatcher>();
+    private SelectionSpan selectionSpan;
 
     public MaskedEditText(Context context) {
         this(context, "");
@@ -129,7 +130,7 @@ public class MaskedEditText extends EditText {
         int maskLength = 0;
         boolean treatNextCharAsLiteral = false;
 
-        Object selection = new Object();
+        SelectionSpan selection = new SelectionSpan();
         value.setSpan(selection, Selection.getSelectionStart(value), Selection.getSelectionEnd(value), Spanned.SPAN_MARK_MARK);
 
         while (i < mask.length()) {
@@ -167,7 +168,7 @@ public class MaskedEditText extends EditText {
         }
 
         Selection.setSelection(value, value.getSpanStart(selection), value.getSpanEnd(selection));
-        value.removeSpan(selection);
+        selectionSpan = selection;
 
         value.setFilters(inputFilters);
     }
@@ -237,6 +238,13 @@ public class MaskedEditText extends EditText {
         }
     }
 
+    private void resetSelection() {
+        if(selectionSpan != null) {
+            SpannableStringBuilder value = new SpannableStringBuilder(getText());
+            Selection.setSelection(value, value.getSpanStart(selectionSpan), value.getSpanEnd(selectionSpan));
+        }
+    }
+
     private class MaskTextWatcher implements TextWatcher {
         private boolean updating = false;
         private String originalValue;
@@ -286,5 +294,9 @@ public class MaskedEditText extends EditText {
 
     private class LiteralSpan {
         // this class is used just to keep track of literal chars in the text
+    }
+
+    private class SelectionSpan {
+        // hold on to the section to reset cursor after text changes
     }
 }
