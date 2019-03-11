@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -39,7 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                txtMaskedEditText.setMask("9999 9999 9999 9999");
+                txtMaskedEditText.setMask("(999) 999-9999");
+                Log.v("REMOVED", txtMaskedEditText.getText(true).toString());
+                Log.v("NOT REMOVED", txtMaskedEditText.getText(false).toString());
                 textWatcherCount++;
                 lblTextWatcherCount.setText(String.valueOf(textWatcherCount));
             }

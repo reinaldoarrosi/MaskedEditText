@@ -123,7 +123,7 @@ public class MaskedEditText extends EditText {
         InputFilter[] inputFilters = value.getFilters();
         value.setFilters(new InputFilter[0]);
         StringBuffer stack = new StringBuffer(value.toString());
-        SpannableStringBuilder builder = new SpannableStringBuilder();
+
 
         if(formattedOriginal.length() >= value.length()) {
             value.setFilters(inputFilters);
@@ -131,6 +131,7 @@ public class MaskedEditText extends EditText {
             return;
         }
 
+        SpannableStringBuilder builder = new SpannableStringBuilder();
         for (char maskChar: mask.toCharArray()) {
             if(stack.length() == 0 && !isMaskChar(maskChar)) {
                 builder.append(String.valueOf(maskChar), new LiteralSpan(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
@@ -157,7 +158,7 @@ public class MaskedEditText extends EditText {
             }
         }
 
-        value.replace(0, value.length(), builder.toString());
+        setText(builder);
         setSelection(builder.length());
         value.setFilters(inputFilters);
     }
@@ -246,8 +247,6 @@ public class MaskedEditText extends EditText {
 
             if (!updating) {
                 updating = true;
-
-                stripMaskChars(s);
 
                 if (s.length() <= 0 && hasHint()) {
                     setText("");
