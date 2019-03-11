@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.0"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -34,7 +34,7 @@ ext {
     siteUrl = 'https://github.com/reinaldoarrosi/MaskedEditText'
     gitUrl = 'https://github.com/reinaldoarrosi/MaskedEditText.git'
 
-    libraryVersion = '1.1.0'
+    libraryVersion = '1.5.2'
 
     developerId = 'rarrosi'
     developerName = 'Reinaldo Arrosi'
